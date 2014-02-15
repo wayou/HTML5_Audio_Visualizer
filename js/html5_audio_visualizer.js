@@ -1,14 +1,13 @@
 /*
-*An audio spectrum visualizer built with HTML5 Audio API
-*Author:Wayou
-*License:feel free to use but keep this info please!
-*Feb 15 2014
-*Need support you can :
-*view the project page:https://github.com/Wayou/HTML5_Audio_Visualizer/
-*view online demo:http://wayouliu.duapp.com/mess/audio_visualizer.html
-*or contact me:liuwayong@gmail.com
-*/
-
+ *An audio spectrum visualizer built with HTML5 Audio API
+ *Author:Wayou
+ *License:feel free to use but keep this info please!
+ *Feb 15 2014
+ *Need support you can :
+ *view the project page:https://github.com/Wayou/HTML5_Audio_Visualizer/
+ *view online demo:http://wayouliu.duapp.com/mess/audio_visualizer.html
+ *or contact me:liuwayong@gmail.com
+ */
 window.onload = function() {
     new Visualizer().ini();
 };
@@ -166,7 +165,7 @@ Visualizer.prototype = {
                 // ctx.fillRect(i * 12, cheight - value, meterWidth, capHeight);
                 //draw the meter
                 ctx.fillStyle = gradient; //set the filllStyle to gradient for a better look
-                ctx.fillRect(i * 12 /*meterWidth+gap*/ , cheight - value + capHeight  /*2 is the gap between meter and cap*/ , meterWidth, cheight); //the meter
+                ctx.fillRect(i * 12 /*meterWidth+gap*/ , cheight - value + capHeight /*2 is the gap between meter and cap*/ , meterWidth, cheight); //the meter
             }
             requestAnimationFrame(drawMeter);
         }
@@ -180,6 +179,8 @@ Visualizer.prototype = {
             ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, cwidth, cheight);
         document.getElementById('fileWrapper').style.opacity = 1;
+        this._updateInfo('HTML5 Audio API showcase | An Audio Viusalizer', false);
+        document.getElementById('uploadedFile').value = '';
     },
     _updateInfo: function(text, processing) {
         var infoBar = document.getElementById('info'),
