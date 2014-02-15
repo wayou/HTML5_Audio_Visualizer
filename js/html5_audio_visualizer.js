@@ -6,7 +6,6 @@ var Visualizer = function() {
     this.fileName = null, //the current file name
     this.audioContext = null,
     this.source = null, //the audio source
-    this.status = 0, //1 for playing and 0 for stoped
     this.info = document.getElementById('info').innerHTML, //this used to upgrade the UI information
     this.infoUpdateId = null //to sotore the setTimeout ID and clear the interval
 };
@@ -22,7 +21,7 @@ Visualizer.prototype = {
         try {
             this.audioContext = new AudioContext();
         } catch (e) {
-            document.getElementById('!Your browser does not support AudioContext');
+            that._updateInfo('!Your browser does not support AudioContext', false);
             console.log(e);
         }
     },
@@ -97,7 +96,6 @@ Visualizer.prototype = {
     _visualize: function(audioContext, buffer) {
         var audioBufferSouceNode = audioContext.createBufferSource(),
             analyser = audioContext.createAnalyser();
-        audioBufferSouceNode.loop = true;
         //connect the source to the analyser
         audioBufferSouceNode.connect(analyser);
         //connect the analyser to the destination(the speaker), or we won't hear the sound
@@ -110,7 +108,7 @@ Visualizer.prototype = {
             audioBufferSouceNode.stop = audioBufferSouceNode.noteOff //in old browsers use noteOn method
         };
         audioBufferSouceNode.start(0);
-        this.status = 1;
+        audioBufferSouceNode.onended = this._audioEnd; //in case a song is ended the spectrum is not zero
         //stop the previous sound if any
         if (this.source !== null) this.source.stop(0);
         this.source = audioBufferSouceNode;
@@ -122,28 +120,55 @@ Visualizer.prototype = {
     _drawSpectrum: function(analyser) {
         var canvas = document.getElementById('canvas'),
             cwidth = canvas.width,
-            cheight = canvas.height,
+            cheight = canvas.height - 2,
             meterWidth = 10, //width of the meters in the spectrum
             gap = 2, //gap between meters
-            meterNum = 800 / (10 + 2); //count of the meters
+            capHeight = 2,
+            capStyle = '#fff',
+            meterNum = 800 / (10 + 2), //count of the meters
+            capYPositionArray = []; ////store the vertical position of hte caps for the preivous frame
         ctx = canvas.getContext('2d'),
         gradient = ctx.createLinearGradient(0, 0, 0, 300);
         gradient.addColorStop(1, '#0f0');
         gradient.addColorStop(0.5, '#ff0');
         gradient.addColorStop(0, '#f00');
-        ctx.fillStyle = gradient; //set the filllStyle to gradient for a better look
+        //ctx.fillStyle = gradient; //set the filllStyle to gradient for a better look
         var drawMeter = function() {
             var array = new Uint8Array(analyser.frequencyBinCount);
             analyser.getByteFrequencyData(array);
-            var step = Math.round(array.length / meterNum); //sample from the total array
+            var step = Math.round(array.length / meterNum); //sample limited data from the total array
             ctx.clearRect(0, 0, cwidth, cheight);
             for (var i = 0; i < meterNum; i++) {
                 var value = array[i * step];
-                ctx.fillRect(i * 12 /*meterWidth+gap*/ , cheight - value, meterWidth, cheight);
+                if (capYPositionArray.length < Math.round(meterNum)) {
+                    capYPositionArray.push(value);
+                };
+                ctx.fillStyle = capStyle;
+                //draw the cap, with transition effect
+                if (value < capYPositionArray[i]) {
+                    ctx.fillRect(i * 12, cheight - (--capYPositionArray[i]), meterWidth, capHeight);
+                } else {
+                    ctx.fillRect(i * 12, cheight - value, meterWidth, capHeight);
+                    capYPositionArray[i] = value;
+                };
+                //normal cap
+                // ctx.fillStyle = capStyle;
+                // ctx.fillRect(i * 12, cheight - value, meterWidth, capHeight);
+                //draw the meter
+                ctx.fillStyle = gradient; //set the filllStyle to gradient for a better look
+                ctx.fillRect(i * 12 /*meterWidth+gap*/ , cheight - value + capHeight + 2 /*2 is the gap between meter and cap*/ , meterWidth, cheight); //the meter
             }
             requestAnimationFrame(drawMeter);
         }
         requestAnimationFrame(drawMeter);
+    },
+    _audioEnd: function() {
+        console.log('audio ended');
+        var canvas = document.getElementById('canvas'),
+            cwidth = canvas.width,
+            cheight = canvas.height,
+            ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, cwidth, cheight);
     },
     _updateInfo: function(text, processing) {
         var infoBar = document.getElementById('info'),
