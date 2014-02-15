@@ -179,7 +179,8 @@ Visualizer.prototype = {
         requestAnimationFrame(drawMeter);
     },
     _audioEnd: function(instance) {
-        if (this.forceStop = true) {
+        if (this.forceStop) {
+            this.forceStop=false;
             return;
         };
         console.log('audio ended');
