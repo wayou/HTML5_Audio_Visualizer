@@ -105,7 +105,8 @@ Visualizer.prototype = {
     },
     _visualize: function(audioContext, buffer) {
         var audioBufferSouceNode = audioContext.createBufferSource(),
-            analyser = audioContext.createAnalyser();
+            analyser = audioContext.createAnalyser(),
+            that = this;
         //connect the source to the analyser
         audioBufferSouceNode.connect(analyser);
         //connect the analyser to the destination(the speaker), or we won't hear the sound
@@ -118,7 +119,9 @@ Visualizer.prototype = {
             audioBufferSouceNode.stop = audioBufferSouceNode.noteOff //in old browsers use noteOn method
         };
         audioBufferSouceNode.start(0);
-        audioBufferSouceNode.onended = this._audioEnd; //in case a song is ended the spectrum is not zero
+        audioBufferSouceNode.onended = function() {
+            that._audioEnd(that);
+        };
         //stop the previous sound if any
         if (this.source !== null) this.source.stop(0);
         this.source = audioBufferSouceNode;
@@ -171,15 +174,17 @@ Visualizer.prototype = {
         }
         requestAnimationFrame(drawMeter);
     },
-    _audioEnd: function() {
+    _audioEnd: function(instance) {
         console.log('audio ended');
         var canvas = document.getElementById('canvas'),
             cwidth = canvas.width,
             cheight = canvas.height,
-            ctx = canvas.getContext('2d');
+            ctx = canvas.getContext('2d'),
+            text = 'HTML5 Audio API showcase | An Audio Viusalizer';
         ctx.clearRect(0, 0, cwidth, cheight);
         document.getElementById('fileWrapper').style.opacity = 1;
-        document.getElementById('info').innerHTML='HTML5 Audio API showcase | An Audio Viusalizer';
+        document.getElementById('info').innerHTML = text;
+        instace.info=text;
         document.getElementById('uploadedFile').value = '';
     },
     _updateInfo: function(text, processing) {
