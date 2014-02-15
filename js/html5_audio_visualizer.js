@@ -184,7 +184,7 @@ Visualizer.prototype = {
         ctx.clearRect(0, 0, cwidth, cheight);
         document.getElementById('fileWrapper').style.opacity = 1;
         document.getElementById('info').innerHTML = text;
-        instace.info=text;
+        instance.info=text;
         document.getElementById('uploadedFile').value = '';
     },
     _updateInfo: function(text, processing) {
