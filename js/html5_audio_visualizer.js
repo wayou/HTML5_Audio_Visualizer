@@ -132,7 +132,6 @@ Visualizer.prototype = {
         gradient.addColorStop(1, '#0f0');
         gradient.addColorStop(0.5, '#ff0');
         gradient.addColorStop(0, '#f00');
-        //ctx.fillStyle = gradient; //set the filllStyle to gradient for a better look
         var drawMeter = function() {
             var array = new Uint8Array(analyser.frequencyBinCount);
             analyser.getByteFrequencyData(array);
