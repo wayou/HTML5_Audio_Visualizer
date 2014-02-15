@@ -17,7 +17,8 @@ var Visualizer = function() {
     this.audioContext = null,
     this.source = null, //the audio source
     this.info = document.getElementById('info').innerHTML, //this used to upgrade the UI information
-    this.infoUpdateId = null //to sotore the setTimeout ID and clear the interval
+    this.infoUpdateId = null, //to sotore the setTimeout ID and clear the interval
+    this.forceStop = false
 };
 Visualizer.prototype = {
     ini: function() {
@@ -123,7 +124,10 @@ Visualizer.prototype = {
             that._audioEnd(that);
         };
         //stop the previous sound if any
-        if (this.source !== null) this.source.stop(0);
+        if (this.source !== null) {
+            this.forceStop = true;
+            this.source.stop(0);
+        }
         this.source = audioBufferSouceNode;
         this._updateInfo('Playing ' + this.fileName, false);
         this.info = 'Playing ' + this.fileName;
@@ -175,6 +179,9 @@ Visualizer.prototype = {
         requestAnimationFrame(drawMeter);
     },
     _audioEnd: function(instance) {
+        if (this.forceStop = true) {
+            return;
+        };
         console.log('audio ended');
         var canvas = document.getElementById('canvas'),
             cwidth = canvas.width,
@@ -184,7 +191,7 @@ Visualizer.prototype = {
         ctx.clearRect(0, 0, cwidth, cheight);
         document.getElementById('fileWrapper').style.opacity = 1;
         document.getElementById('info').innerHTML = text;
-        instance.info=text;
+        instance.info = text;
         document.getElementById('uploadedFile').value = '';
     },
     _updateInfo: function(text, processing) {
