@@ -179,6 +179,7 @@ Visualizer.prototype = {
             cheight = canvas.height,
             ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, cwidth, cheight);
+        document.getElementById('fileWrapper').style.opacity = 1;
     },
     _updateInfo: function(text, processing) {
         var infoBar = document.getElementById('info'),
