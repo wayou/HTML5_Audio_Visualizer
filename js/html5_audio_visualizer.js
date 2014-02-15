@@ -7,8 +7,9 @@ var Visualizer = function() {
     this.audioContext = null,
     this.source = null, //the audio source
     this.status = 0, //1 for playing and 0 for stoped
-    this.info = document.getElementById('info').innerHTML //this used to upgrade the UI information
-}
+    this.info = document.getElementById('info').innerHTML, //this used to upgrade the UI information
+    this.infoUpdateId = null //to sotore the setTimeout ID and clear the interval
+};
 Visualizer.prototype = {
     ini: function() {
         this._prepareAPI();
@@ -28,8 +29,7 @@ Visualizer.prototype = {
     _addEventListner: function() {
         var that = this,
             audioInput = document.getElementById('uploadedFile'),
-            infoBar = document.getElementById('info'),
-            dropContainer = document.getElementsByTagName("body")[0];
+            dropContainer = document.getElementsByTagName("canvas")[0];
         //listen the file upload
         audioInput.onchange = function() {
             //the if statement fixes the file selction cancle, because the onchange will trigger even the file selection been canceled
@@ -39,12 +39,12 @@ Visualizer.prototype = {
                 that.fileName = that.file.name;
                 //once the file is ready,start the visualizer
                 that._start();
-                infoBar.innerHTML = 'Uploading...';
+                that._updateInfo('Uploading', true);
             };
         };
         //listen the drag & drop
         dropContainer.addEventListener("dragenter", function() {
-            infoBar.innerHTML = 'Drop it on the page...';
+            that._updateInfo('Drop it on the page', true);
         }, false);
         dropContainer.addEventListener("dragover", function(e) {
             e.stopPropagation();
@@ -53,12 +53,12 @@ Visualizer.prototype = {
             e.dataTransfer.dropEffect = 'copy';
         }, false);
         dropContainer.addEventListener("dragleave", function() {
-            document.getElementById('info').innerHTML = that.info;
+            that._updateInfo(that.info, false);
         }, false);
         dropContainer.addEventListener("drop", function(e) {
             e.stopPropagation();
             e.preventDefault();
-            document.getElementById('info').innerHTML = 'Uploading...';
+            that._updateInfo('Uploading', true);
             //get the dropped file
             that.file = e.dataTransfer.files[0];
             that.fileName = that.file.name;
@@ -77,18 +77,21 @@ Visualizer.prototype = {
             if (audioContext === null) {
                 return
             };
+            that._updateInfo('Decoding the audio', true);
             audioContext.decodeAudioData(fileResult, function(buffer) {
+                that._updateInfo('Decode succussfully,start the visualizer', true);
                 that._visualize(audioContext, buffer);
             }, function(e) {
-                document.getElementById('info').innerHTML = '!Fail to decode the file';
+                that._updateInfo('!Fail to decode the file', false);
                 console.log(e);
             });
         };
         fr.onerror = function(e) {
-            document.getElementById('info').innerHTML = '!Fail to read the file';
+            that._updateInfo('!Fail to read the file', false);
             console.log(e);
         };
         //assign the file to the reader
+        this._updateInfo('Starting read the file', true);
         fr.readAsArrayBuffer(file);
     },
     _visualize: function(audioContext, buffer) {
@@ -111,7 +114,8 @@ Visualizer.prototype = {
         //stop the previous sound if any
         if (this.source !== null) this.source.stop(0);
         this.source = audioBufferSouceNode;
-        this.info = document.getElementById('info').innerHTML = 'Playing ' + this.fileName;
+        this._updateInfo('Playing ' + this.fileName, false);
+        this.info = 'Playing ' + this.fileName;
         document.getElementById('fileWrapper').style.opacity = 0.2;
         this._drawSpectrum(analyser);
     },
@@ -140,5 +144,26 @@ Visualizer.prototype = {
             requestAnimationFrame(drawMeter);
         }
         requestAnimationFrame(drawMeter);
+    },
+    _updateInfo: function(text, processing) {
+        var infoBar = document.getElementById('info'),
+            dots = '...',
+            i = 0,
+            that = this;
+        infoBar.innerHTML = text + dots.substring(0, i++);
+        if (this.infoUpdateId !== null) {
+            clearTimeout(this.infoUpdateId);
+        };
+        if (processing) {
+            //animate dots at the end of the info text
+            var animateDot = function() {
+                if (i > 3) {
+                    i = 0
+                };
+                infoBar.innerHTML = text + dots.substring(0, i++);
+                that.infoUpdateId = setTimeout(animateDot, 250);
+            }
+            this.infoUpdateId = setTimeout(animateDot, 250);
+        };
     }
 }
