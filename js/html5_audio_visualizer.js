@@ -84,7 +84,7 @@ Visualizer.prototype = {
             var fileResult = e.target.result;
             var audioContext = that.audioContext;
             if (audioContext === null) {
-                return
+                return;
             };
             that._updateInfo('Decoding the audio', true);
             audioContext.decodeAudioData(fileResult, function(buffer) {
