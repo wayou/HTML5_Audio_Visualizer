@@ -179,7 +179,7 @@ Visualizer.prototype = {
             ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, cwidth, cheight);
         document.getElementById('fileWrapper').style.opacity = 1;
-        this._updateInfo('HTML5 Audio API showcase | An Audio Viusalizer', false);
+        document.getElementById('info').innerHTML='HTML5 Audio API showcase | An Audio Viusalizer';
         document.getElementById('uploadedFile').value = '';
     },
     _updateInfo: function(text, processing) {
