@@ -156,7 +156,7 @@ Visualizer.prototype = {
                 // ctx.fillRect(i * 12, cheight - value, meterWidth, capHeight);
                 //draw the meter
                 ctx.fillStyle = gradient; //set the filllStyle to gradient for a better look
-                ctx.fillRect(i * 12 /*meterWidth+gap*/ , cheight - value + capHeight + 2 /*2 is the gap between meter and cap*/ , meterWidth, cheight); //the meter
+                ctx.fillRect(i * 12 /*meterWidth+gap*/ , cheight - value + capHeight  /*2 is the gap between meter and cap*/ , meterWidth, cheight); //the meter
             }
             requestAnimationFrame(drawMeter);
         }
