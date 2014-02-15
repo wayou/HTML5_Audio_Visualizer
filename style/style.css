@@ -14,3 +14,8 @@ html, body {
 #visualizer_wrapper{
 	text-align: center;
 }
+footer{
+	position: absolute;
+	bottom: 2px;
+	color:#aaa;
+}
