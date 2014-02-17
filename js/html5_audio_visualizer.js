@@ -53,12 +53,12 @@ Visualizer.prototype = {
                 that.fileName = that.file.name;
                 if (that.status === 1) {
                     //the sound is still playing but we upload another file, so set the forceStop flag to true
-                    document.getElementById('fileWrapper').style.opacity = 1;
                     that.forceStop = true;
                 };
+                document.getElementById('fileWrapper').style.opacity = 1;
+                that._updateInfo('Uploading', true);
                 //once the file is ready,start the visualizer
                 that._start();
-                that._updateInfo('Uploading', true);
             };
         };
         //listen the drag & drop
@@ -77,6 +77,7 @@ Visualizer.prototype = {
         dropContainer.addEventListener("drop", function(e) {
             e.stopPropagation();
             e.preventDefault();
+            document.getElementById('fileWrapper').style.opacity = 1;
             that._updateInfo('Uploading', true);
             //get the dropped file
             that.file = e.dataTransfer.files[0];

@@ -43,7 +43,7 @@
             <small>Star me on <a href="https://github.com/Wayou/HTML5_Audio_Visualizer" target="_blank">GitHub</a></small>
         </footer>
         <script type="text/javascript">
-            /*
+                /*
         *An audio spectrum visualizer built with HTML5 Audio API
         *Author:Wayou
         *License:feel free to use but keep this info please!
@@ -98,12 +98,12 @@
                         that.fileName = that.file.name;
                         if (that.status === 1) {
                             //the sound is still playing but we upload another file, so set the forceStop flag to true
-                            document.getElementById('fileWrapper').style.opacity = 1;
                             that.forceStop = true;
                         };
+                        document.getElementById('fileWrapper').style.opacity = 1;
+                        that._updateInfo('Uploading', true);
                         //once the file is ready,start the visualizer
                         that._start();
-                        that._updateInfo('Uploading', true);
                     };
                 };
                 //listen the drag & drop
@@ -122,6 +122,7 @@
                 dropContainer.addEventListener("drop", function(e) {
                     e.stopPropagation();
                     e.preventDefault();
+                    document.getElementById('fileWrapper').style.opacity = 1;
                     that._updateInfo('Uploading', true);
                     //get the dropped file
                     that.file = e.dataTransfer.files[0];
@@ -276,12 +277,12 @@
         }
         </script>
         <script>
-                (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
                 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
                 m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-                })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-                ga('create', 'UA-46794744-5', 'duapp.com');
-                ga('send', 'pageview');
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+            ga('create', 'UA-46794744-5', 'duapp.com');
+            ga('send', 'pageview');
         </script>
     </body>
 </html>
