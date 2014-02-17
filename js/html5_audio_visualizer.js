@@ -19,6 +19,8 @@ var Visualizer = function() {
     this.source = null, //the audio source
     this.info = document.getElementById('info').innerHTML, //this used to upgrade the UI information
     this.infoUpdateId = null, //to sotore the setTimeout ID and clear the interval
+    this.animationId = null,
+    this.status = 0, //flag for sound is playing 1 or stopped 0
     this.forceStop = false
 };
 Visualizer.prototype = {
@@ -30,6 +32,7 @@ Visualizer.prototype = {
         //fix browser vender for AudioContext and requestAnimationFrame
         window.AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext || window.msAudioContext;
         window.requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame;
+        window.cancelAnimationFrame = window.cancelAnimationFrame || window.webkitCancelAnimationFrame || window.mozCancelAnimationFrame || window.msCancelAnimationFrame;
         try {
             this.audioContext = new AudioContext();
         } catch (e) {
@@ -48,6 +51,11 @@ Visualizer.prototype = {
                 //only process the first file
                 that.file = audioInput.files[0];
                 that.fileName = that.file.name;
+                if (that.status === 1) {
+                    //the sound is still playing but we upload another file, so set the forceStop flag to true
+                    document.getElementById('fileWrapper').style.opacity = 1;
+                    that.forceStop = true;
+                };
                 //once the file is ready,start the visualizer
                 that._start();
                 that._updateInfo('Uploading', true);
@@ -72,6 +80,10 @@ Visualizer.prototype = {
             that._updateInfo('Uploading', true);
             //get the dropped file
             that.file = e.dataTransfer.files[0];
+            if (that.status === 1) {
+                document.getElementById('fileWrapper').style.opacity = 1;
+                that.forceStop = true;
+            };
             that.fileName = that.file.name;
             //once the file is ready,start the visualizer
             that._start();
@@ -120,25 +132,28 @@ Visualizer.prototype = {
             audioBufferSouceNode.start = audioBufferSouceNode.noteOn //in old browsers use noteOn method
             audioBufferSouceNode.stop = audioBufferSouceNode.noteOff //in old browsers use noteOn method
         };
+        //stop the previous sound if any
+        if (this.source !== null) {
+            cancelAnimationFrame(this.animationId);
+            this.source.stop(0);
+        }
         audioBufferSouceNode.start(0);
+        this.status = 1;
+        this.source = audioBufferSouceNode;
         audioBufferSouceNode.onended = function() {
             that._audioEnd(that);
         };
-        //stop the previous sound if any
-        if (this.source !== null) {
-            this.forceStop = true;
-            this.source.stop(0);
-        }
-        this.source = audioBufferSouceNode;
         this._updateInfo('Playing ' + this.fileName, false);
         this.info = 'Playing ' + this.fileName;
         document.getElementById('fileWrapper').style.opacity = 0.2;
         this._drawSpectrum(analyser);
     },
     _drawSpectrum: function(analyser) {
-        var canvas = document.getElementById('canvas'),
+        var that = this,
+            canvas = document.getElementById('canvas'),
             cwidth = canvas.width,
             cheight = canvas.height - 2,
+            /*2 is the gap between meter and cap*/
             meterWidth = 10, //width of the meters in the spectrum
             gap = 2, //gap between meters
             capHeight = 2,
@@ -157,6 +172,9 @@ Visualizer.prototype = {
             ctx.clearRect(0, 0, cwidth, cheight);
             for (var i = 0; i < meterNum; i++) {
                 var value = array[i * step];
+                if (that.status === 0) {
+                    value = 0; //fix when some sounds end the value still not back to zero
+                };
                 if (capYPositionArray.length < Math.round(meterNum)) {
                     capYPositionArray.push(value);
                 };
@@ -168,29 +186,22 @@ Visualizer.prototype = {
                     ctx.fillRect(i * 12, cheight - value, meterWidth, capHeight);
                     capYPositionArray[i] = value;
                 };
-                //normal cap
-                // ctx.fillStyle = capStyle;
-                // ctx.fillRect(i * 12, cheight - value, meterWidth, capHeight);
-                //draw the meter
                 ctx.fillStyle = gradient; //set the filllStyle to gradient for a better look
-                ctx.fillRect(i * 12 /*meterWidth+gap*/ , cheight - value + capHeight /*2 is the gap between meter and cap*/ , meterWidth, cheight); //the meter
+                ctx.fillRect(i * 12 /*meterWidth+gap*/ , cheight - value + capHeight, meterWidth, cheight); //the meter
             }
-            requestAnimationFrame(drawMeter);
+            this.animationId = requestAnimationFrame(drawMeter);
         }
-        requestAnimationFrame(drawMeter);
+        this.animationId = requestAnimationFrame(drawMeter);
     },
     _audioEnd: function(instance) {
         if (this.forceStop) {
-            this.forceStop=false;
+            this.forceStop = false;
+            this.status = 1;
             return;
         };
+        this.status = 0;
         console.log('audio ended');
-        var canvas = document.getElementById('canvas'),
-            cwidth = canvas.width,
-            cheight = canvas.height,
-            ctx = canvas.getContext('2d'),
-            text = 'HTML5 Audio API showcase | An Audio Viusalizer';
-        ctx.clearRect(0, 0, cwidth, cheight);
+        var text = 'HTML5 Audio API showcase | An Audio Viusalizer';
         document.getElementById('fileWrapper').style.opacity = 1;
         document.getElementById('info').innerHTML = text;
         instance.info = text;
