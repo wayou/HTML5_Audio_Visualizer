@@ -1,13 +1,13 @@
 /*
- *An audio spectrum visualizer built with HTML5 Audio API
- *Author:Wayou
- *License:feel free to use but keep this info please!
- *Feb 15 2014
- *Need support you can :
- *view the project page:https://github.com/Wayou/HTML5_Audio_Visualizer/
- *view online demo:http://wayouliu.duapp.com/mess/audio_visualizer.html
- view the blog on how this is done:http://www.cnblogs.com/Wayou/p/html5_audio_api_visualizer.html
- *or contact me:liuwayong@gmail.com
+ * An audio spectrum visualizer built with HTML5 Audio API
+ * Author:Wayou
+ * License:feel free to use but keep this info please!
+ * Feb 15, 2014
+ * For more infomation or support you can :
+ * view the project page:https://github.com/Wayou/HTML5_Audio_Visualizer/
+ * view online demo:http://wayouliu.duapp.com/mess/audio_visualizer.html
+ * view the blog on how this is done:http://www.cnblogs.com/Wayou/p/html5_audio_api_visualizer.html
+ * or contact me:liuwayong@gmail.com
  */
 window.onload = function() {
     new Visualizer().ini();
@@ -37,7 +37,7 @@ Visualizer.prototype = {
         try {
             this.audioContext = new AudioContext();
         } catch (e) {
-            that._updateInfo('!Your browser does not support AudioContext', false);
+            this._updateInfo('!Your browser does not support AudioContext', false);
             console.log(e);
         }
     },
@@ -64,6 +64,7 @@ Visualizer.prototype = {
         };
         //listen the drag & drop
         dropContainer.addEventListener("dragenter", function() {
+            document.getElementById('fileWrapper').style.opacity = 1;
             that._updateInfo('Drop it on the page', true);
         }, false);
         dropContainer.addEventListener("dragover", function(e) {
@@ -73,6 +74,7 @@ Visualizer.prototype = {
             e.dataTransfer.dropEffect = 'copy';
         }, false);
         dropContainer.addEventListener("dragleave", function() {
+            document.getElementById('fileWrapper').style.opacity = 0.2;
             that._updateInfo(that.info, false);
         }, false);
         dropContainer.addEventListener("drop", function(e) {
@@ -157,7 +159,6 @@ Visualizer.prototype = {
             canvas = document.getElementById('canvas'),
             cwidth = canvas.width,
             cheight = canvas.height - 2,
-            /*2 is the gap between meter and cap*/
             meterWidth = 10, //width of the meters in the spectrum
             gap = 2, //gap between meters
             capHeight = 2,
@@ -182,7 +183,7 @@ Visualizer.prototype = {
                     allCapsReachBottom = allCapsReachBottom && (capYPositionArray[i] === 0);
                 };
                 if (allCapsReachBottom) {
-                    cancelAnimationFrame(that.animationId);//since the sound is top and animation finished, stop the requestAnimation to prevent potential memory leak,THIS IS VERY IMPORTANT!
+                    cancelAnimationFrame(that.animationId); //since the sound is top and animation finished, stop the requestAnimation to prevent potential memory leak,THIS IS VERY IMPORTANT!
                     return;
                 };
             };
