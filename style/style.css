@@ -15,7 +15,7 @@ html, body {
 	text-align: center;
 }
 footer{
-	position: absolute;
+	position: fixed;
 	bottom: 2px;
 	color:#aaa;
 }
