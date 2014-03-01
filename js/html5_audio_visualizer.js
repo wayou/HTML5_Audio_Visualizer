@@ -47,6 +47,8 @@ Visualizer.prototype = {
             dropContainer = document.getElementsByTagName("canvas")[0];
         //listen the file upload
         audioInput.onchange = function() {
+            if (that.audioContext===null) {return;};
+            
             //the if statement fixes the file selction cancle, because the onchange will trigger even the file selection been canceled
             if (audioInput.files.length !== 0) {
                 //only process the first file
@@ -80,6 +82,7 @@ Visualizer.prototype = {
         dropContainer.addEventListener("drop", function(e) {
             e.stopPropagation();
             e.preventDefault();
+            if (that.audioContext===null) {return;};
             document.getElementById('fileWrapper').style.opacity = 1;
             that._updateInfo('Uploading', true);
             //get the dropped file
