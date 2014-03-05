@@ -1,0 +1,21 @@
+html, body {
+    margin: 0;
+    font-family: arial, "Microsoft YaHei";
+    background-color: #272822;
+    color: #FEFEFE;
+}
+#fileWrapper{
+	transition:all 0.5s ease;
+}
+#fileWrapper:hover{
+	opacity: 1!important;
+}
+
+#visualizer_wrapper{
+	text-align: center;
+}
+footer{
+	position: fixed;
+	bottom: 2px;
+	color:#aaa;
+}
