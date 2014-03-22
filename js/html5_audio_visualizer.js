@@ -13,16 +13,16 @@ window.onload = function() {
     new Visualizer().ini();
 };
 var Visualizer = function() {
-    this.file = null, //the current file
-    this.fileName = null, //the current file name
-    this.audioContext = null,
-    this.source = null, //the audio source
-    this.info = document.getElementById('info').innerHTML, //this used to upgrade the UI information
-    this.infoUpdateId = null, //to sotore the setTimeout ID and clear the interval
-    this.animationId = null,
-    this.status = 0, //flag for sound is playing 1 or stopped 0
-    this.forceStop = false,
-    this.allCapsReachBottom = false
+    this.file = null; //the current file
+    this.fileName = null; //the current file name
+    this.audioContext = null;
+    this.source = null; //the audio source
+    this.info = document.getElementById('info').innerHTML; //this used to upgrade the UI information
+    this.infoUpdateId = null; //to sotore the setTimeout ID and clear the interval
+    this.animationId = null;
+    this.status = 0; //flag for sound is playing 1 or stopped 0
+    this.forceStop = false;
+    this.allCapsReachBottom = false;
 };
 Visualizer.prototype = {
     ini: function() {
