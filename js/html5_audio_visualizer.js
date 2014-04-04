@@ -99,7 +99,7 @@ Visualizer.prototype = {
     _start: function() {
         //read and decode the file into audio array buffer 
         var that = this,
-            file = this.file,
+            file = that.file,
             fr = new FileReader();
         fr.onload = function(e) {
             var fileResult = e.target.result;
