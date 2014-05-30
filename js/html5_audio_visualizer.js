@@ -1,13 +1,11 @@
 /*
  * An audio spectrum visualizer built with HTML5 Audio API
  * Author:Wayou
- * License:feel free to use but keep this info please!
+ * License:feel free to use but keep refer pls!
  * Feb 15, 2014
  * For more infomation or support you can :
  * view the project page:https://github.com/Wayou/HTML5_Audio_Visualizer/
  * view online demo:http://wayouliu.duapp.com/mess/audio_visualizer.html
- * view the blog on how this is done:http://www.cnblogs.com/Wayou/p/html5_audio_api_visualizer.html
- * or contact me:liuwayong@gmail.com
  */
 window.onload = function() {
     new Visualizer().ini();
