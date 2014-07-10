@@ -5,7 +5,7 @@ An audio spectrum visualizer built with HTML5 Audio API
 
 Demo
 ---
-[See it in action](http://wayouliu.duapp.com/mess/audio_visualizer.html).
+[See it in action](http://wayou.github.io/HTML5_Audio_Visualizer/).
 
 Screen Capture
 ---
