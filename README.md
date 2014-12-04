@@ -9,4 +9,5 @@ Demo
 
 Screen Capture
 ---
+<p style="color:red;">test</p>
 ![alt tag](https://raw.github.com/Wayou/HTML5_Audio_Visualizer/master/sources/screencapture.png)
