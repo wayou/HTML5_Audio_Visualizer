@@ -5,7 +5,7 @@
  * Feb 15, 2014
  * For more infomation or support you can :
  * view the project page:https://github.com/Wayou/HTML5_Audio_Visualizer/
- * view online demo:http://wayouliu.duapp.com/mess/audio_visualizer.html
+ * view online demo:http://wayou.github.io/HTML5_Audio_Visualizer/
  */
 window.onload = function() {
     new Visualizer().ini();
