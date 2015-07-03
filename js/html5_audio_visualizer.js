@@ -135,7 +135,7 @@ Visualizer.prototype = {
         //play the source
         if (!audioBufferSouceNode.start) {
             audioBufferSouceNode.start = audioBufferSouceNode.noteOn //in old browsers use noteOn method
-            audioBufferSouceNode.stop = audioBufferSouceNode.noteOff //in old browsers use noteOn method
+            audioBufferSouceNode.stop = audioBufferSouceNode.noteOff //in old browsers use noteOff method
         };
         //stop the previous sound if any
         if (this.animationId !== null) {
