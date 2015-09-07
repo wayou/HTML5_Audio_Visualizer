@@ -1,4 +1,4 @@
-/*
+/**
  * An audio spectrum visualizer built with HTML5 Audio API
  * Author:Wayou
  * License:feel free to use but keep refer pls!
