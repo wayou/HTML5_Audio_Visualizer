@@ -199,9 +199,9 @@ Visualizer.prototype = {
                 ctx.fillStyle = capStyle;
                 //draw the cap, with transition effect
                 if (value < capYPositionArray[i]) {
-                    ctx.fillRect(i * 12, cheight - (--capYPositionArray[i]), meterWidth, capHeight);
+                    ctx.fillRect(i * (meterWidth+gap)+gap, cheight - (--capYPositionArray[i]), meterWidth, capHeight);
                 } else {
-                    ctx.fillRect(i * 12, cheight - value, meterWidth, capHeight);
+                    ctx.fillRect(i * (meterWidth+gap)+gap, cheight - value, meterWidth, capHeight);
                     capYPositionArray[i] = value;
                 };
                 ctx.fillStyle = gradient; //set the filllStyle to gradient for a better look
