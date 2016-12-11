@@ -158,12 +158,12 @@ Visualizer.prototype = {
             cwidth = canvas.width,
             capHeight = 2,
             cheight = canvas.height - capHeight,
-            capStyle = '#00f',
+            capStyle = '#fff',
             meterNum = 128, //count of the meters
             gap = 2, //gap between meters
             meterWidth = (cwidth - gap) / meterNum - gap, //width of the meters in the spectrum
-            lowFrequencyFix = 3 * meterNum/8, //cut some lower frequencies for aesthetic reasons
-            capYPositionArray = []; ////store the vertical position of hte caps for the preivous frame
+            lowFrequencyOffset = 3 * meterNum/8, //cut some lower frequencies for aesthetic reasons
+            capYPositionArray = []; //store the vertical position of the caps for the previous frame
         ctx = canvas.getContext('2d'),
         gradient = ctx.createLinearGradient(0, 0, 0, 300);
         gradient.addColorStop(1, '#0f0');
@@ -185,14 +185,14 @@ Visualizer.prototype = {
                     allCapsReachBottom = allCapsReachBottom && (capYPositionArray[i] === 0);
                 };
                 if (allCapsReachBottom) {
-                    cancelAnimationFrame(that.animationId); //since the sound is stoped and animation finished, stop the requestAnimation to prevent potential memory leak,THIS IS VERY IMPORTANT!
+                    cancelAnimationFrame(that.animationId); //since the sound is stopped and animation finished, stop the requestAnimation to prevent potential memory leak,THIS IS VERY IMPORTANT!
                     return;
                 };
             };
-            var step = Math.pow(array.length, 1 / (meterNum + lowFrequencyFix));
+            var step = Math.pow(array.length, 1 / (meterNum + lowFrequencyOffset));
             ctx.clearRect(0, 0, cwidth, cheight);
             for (var i = 0; i < meterNum; i++) {
-                var value = array[Math.round(Math.pow(step, lowFrequencyFix + i))] * cheight / 255; // logarithmic scale
+                var value = array[Math.round(Math.pow(step, lowFrequencyOffset + i))] * cheight / 255; // logarithmic scale
                 if (capYPositionArray.length < Math.round(meterNum)) {
                     capYPositionArray.push(value);
                 };
