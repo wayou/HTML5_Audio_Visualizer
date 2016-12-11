@@ -162,12 +162,16 @@ Visualizer.prototype = {
             meterNum = 128, //count of the meters
             gap = 2, //gap between meters
             meterWidth = (cwidth - gap) / meterNum - gap, //width of the meters in the spectrum
+            lowFrequencyFix = 3 * meterNum/8, //cut some lower frequencies for aesthetic reasons
             capYPositionArray = []; ////store the vertical position of hte caps for the preivous frame
         ctx = canvas.getContext('2d'),
         gradient = ctx.createLinearGradient(0, 0, 0, 300);
         gradient.addColorStop(1, '#0f0');
         gradient.addColorStop(0.5, '#ff0');
         gradient.addColorStop(0, '#f00');
+
+        analyser.fftSize = 32768/2;
+
         var drawMeter = function() {
             var array = new Uint8Array(analyser.frequencyBinCount);
             analyser.getByteFrequencyData(array);
@@ -185,10 +189,10 @@ Visualizer.prototype = {
                     return;
                 };
             };
-            var step = Math.round(array.length / meterNum); //sample limited data from the total array
+            var step = Math.pow(array.length, 1 / (meterNum + lowFrequencyFix));
             ctx.clearRect(0, 0, cwidth, cheight);
             for (var i = 0; i < meterNum; i++) {
-                var value = array[i * step] * cheight / 255;
+                var value = array[Math.round(Math.pow(step, lowFrequencyFix + i))] * cheight / 255; // logarithmic scale
                 if (capYPositionArray.length < Math.round(meterNum)) {
                     capYPositionArray.push(value);
                 };
