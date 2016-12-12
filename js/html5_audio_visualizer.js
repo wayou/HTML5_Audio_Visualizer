@@ -12,8 +12,8 @@ var Visualizer = function() {
     this.fileName = null; //the current file name
     this.audioContext = null;
     this.source = null; //the audio source
-    this.info = document.getElementById('info').innerHTML; //this used to upgrade the UI information
-    this.infoUpdateId = null; //to sotore the setTimeout ID and clear the interval
+    this.info = document.getElementById('info').innerHTML; //used to upgrade the UI information
+    this.infoUpdateId = null; //to store the setTimeout ID and clear the interval
     this.animationId = null;
     this.status = 0; //flag for sound is playing 1 or stopped 0
     this.forceStop = false;
@@ -108,12 +108,12 @@ Visualizer.prototype = {
                 that._visualize(audioContext, buffer);
             }, function(e) {
                 that._updateInfo('!Fail to decode the file', false);
-                console.log(e);
+                console.error(e);
             });
         };
         fr.onerror = function(e) {
             that._updateInfo('!Fail to read the file', false);
-            console.log(e);
+            console.error(e);
         };
         //assign the file to the reader
         this._updateInfo('Starting read the file', true);
