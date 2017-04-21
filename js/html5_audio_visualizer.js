@@ -156,18 +156,22 @@ Visualizer.prototype = {
         var that = this,
             canvas = document.getElementById('canvas'),
             cwidth = canvas.width,
-            cheight = canvas.height - 2,
-            meterWidth = 10, //width of the meters in the spectrum
-            gap = 2, //gap between meters
             capHeight = 2,
+            cheight = canvas.height - capHeight,
             capStyle = '#fff',
-            meterNum = 800 / (10 + 2), //count of the meters
-            capYPositionArray = []; ////store the vertical position of hte caps for the preivous frame
+            meterNum = 128, //count of the meters
+            gap = 2, //gap between meters
+            meterWidth = (cwidth - gap) / meterNum - gap, //width of the meters in the spectrum
+            lowFrequencyOffset = 3 * meterNum / 8, //cut some lower frequencies for aesthetic reasons
+            capYPositionArray = []; //store the vertical position of the caps for the previous frame
         ctx = canvas.getContext('2d'),
         gradient = ctx.createLinearGradient(0, 0, 0, 300);
         gradient.addColorStop(1, '#0f0');
         gradient.addColorStop(0.5, '#ff0');
         gradient.addColorStop(0, '#f00');
+
+        analyser.fftSize = 32768/2;
+
         var drawMeter = function() {
             var array = new Uint8Array(analyser.frequencyBinCount);
             analyser.getByteFrequencyData(array);
@@ -181,27 +185,27 @@ Visualizer.prototype = {
                     allCapsReachBottom = allCapsReachBottom && (capYPositionArray[i] === 0);
                 };
                 if (allCapsReachBottom) {
-                    cancelAnimationFrame(that.animationId); //since the sound is stoped and animation finished, stop the requestAnimation to prevent potential memory leak,THIS IS VERY IMPORTANT!
+                    cancelAnimationFrame(that.animationId); //since the sound is stopped and animation finished, stop the requestAnimation to prevent potential memory leak,THIS IS VERY IMPORTANT!
                     return;
                 };
             };
-            var step = Math.round(array.length / meterNum); //sample limited data from the total array
+            var step = Math.pow(array.length, 1 / (meterNum + lowFrequencyOffset));
             ctx.clearRect(0, 0, cwidth, cheight);
             for (var i = 0; i < meterNum; i++) {
-                var value = array[i * step];
+                var value = array[Math.round(Math.pow(step, lowFrequencyOffset + i))] * cheight / 255; // logarithmic scale
                 if (capYPositionArray.length < Math.round(meterNum)) {
                     capYPositionArray.push(value);
                 };
                 ctx.fillStyle = capStyle;
                 //draw the cap, with transition effect
                 if (value < capYPositionArray[i]) {
-                    ctx.fillRect(i * 12, cheight - (--capYPositionArray[i]), meterWidth, capHeight);
+                    ctx.fillRect(i * (meterWidth+gap)+gap, cheight - (--capYPositionArray[i]), meterWidth, capHeight);
                 } else {
-                    ctx.fillRect(i * 12, cheight - value, meterWidth, capHeight);
+                    ctx.fillRect(i * (meterWidth+gap)+gap, cheight - value, meterWidth, capHeight);
                     capYPositionArray[i] = value;
                 };
                 ctx.fillStyle = gradient; //set the filllStyle to gradient for a better look
-                ctx.fillRect(i * 12 /*meterWidth+gap*/ , cheight - value + capHeight, meterWidth, cheight); //the meter
+                ctx.fillRect(i * (meterWidth+gap)+gap, cheight - value + capHeight, meterWidth, cheight); //the meter
             }
             that.animationId = requestAnimationFrame(drawMeter);
         }
