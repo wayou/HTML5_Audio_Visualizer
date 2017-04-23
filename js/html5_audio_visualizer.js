@@ -1,28 +1,23 @@
-/*
+/**
  * An audio spectrum visualizer built with HTML5 Audio API
  * Author:Wayou
- * License:feel free to use but keep this info please!
+ * License: MIT
  * Feb 15, 2014
- * For more infomation or support you can :
- * view the project page:https://github.com/Wayou/HTML5_Audio_Visualizer/
- * view online demo:http://wayouliu.duapp.com/mess/audio_visualizer.html
- * view the blog on how this is done:http://www.cnblogs.com/Wayou/p/html5_audio_api_visualizer.html
- * or contact me:liuwayong@gmail.com
  */
 window.onload = function() {
     new Visualizer().ini();
 };
 var Visualizer = function() {
-    this.file = null, //the current file
-    this.fileName = null, //the current file name
-    this.audioContext = null,
-    this.source = null, //the audio source
-    this.info = document.getElementById('info').innerHTML, //this used to upgrade the UI information
-    this.infoUpdateId = null, //to sotore the setTimeout ID and clear the interval
-    this.animationId = null,
-    this.status = 0, //flag for sound is playing 1 or stopped 0
-    this.forceStop = false,
-    this.allCapsReachBottom = false
+    this.file = null; //the current file
+    this.fileName = null; //the current file name
+    this.audioContext = null;
+    this.source = null; //the audio source
+    this.info = document.getElementById('info').innerHTML; //used to upgrade the UI information
+    this.infoUpdateId = null; //to store the setTimeout ID and clear the interval
+    this.animationId = null;
+    this.status = 0; //flag for sound is playing 1 or stopped 0
+    this.forceStop = false;
+    this.allCapsReachBottom = false;
 };
 Visualizer.prototype = {
     ini: function() {
@@ -48,7 +43,7 @@ Visualizer.prototype = {
         //listen the file upload
         audioInput.onchange = function() {
             if (that.audioContext===null) {return;};
-            
+
             //the if statement fixes the file selction cancle, because the onchange will trigger even the file selection been canceled
             if (audioInput.files.length !== 0) {
                 //only process the first file
@@ -97,7 +92,7 @@ Visualizer.prototype = {
         }, false);
     },
     _start: function() {
-        //read and decode the file into audio array buffer 
+        //read and decode the file into audio array buffer
         var that = this,
             file = this.file,
             fr = new FileReader();
@@ -113,12 +108,12 @@ Visualizer.prototype = {
                 that._visualize(audioContext, buffer);
             }, function(e) {
                 that._updateInfo('!Fail to decode the file', false);
-                console.log(e);
+                console.error(e);
             });
         };
         fr.onerror = function(e) {
             that._updateInfo('!Fail to read the file', false);
-            console.log(e);
+            console.error(e);
         };
         //assign the file to the reader
         this._updateInfo('Starting read the file', true);
@@ -137,7 +132,7 @@ Visualizer.prototype = {
         //play the source
         if (!audioBufferSouceNode.start) {
             audioBufferSouceNode.start = audioBufferSouceNode.noteOn //in old browsers use noteOn method
-            audioBufferSouceNode.stop = audioBufferSouceNode.noteOff //in old browsers use noteOn method
+            audioBufferSouceNode.stop = audioBufferSouceNode.noteOff //in old browsers use noteOff method
         };
         //stop the previous sound if any
         if (this.animationId !== null) {
@@ -186,7 +181,7 @@ Visualizer.prototype = {
                     allCapsReachBottom = allCapsReachBottom && (capYPositionArray[i] === 0);
                 };
                 if (allCapsReachBottom) {
-                    cancelAnimationFrame(that.animationId); //since the sound is top and animation finished, stop the requestAnimation to prevent potential memory leak,THIS IS VERY IMPORTANT!
+                    cancelAnimationFrame(that.animationId); //since the sound is stoped and animation finished, stop the requestAnimation to prevent potential memory leak,THIS IS VERY IMPORTANT!
                     return;
                 };
             };
