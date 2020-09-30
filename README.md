@@ -1,6 +1,8 @@
 HTML5 Audio Visualizer
 ======================
 
+An Amazing Project for you
+
 An audio spectrum visualizer built with HTML5 Audio API
 
 Demo
