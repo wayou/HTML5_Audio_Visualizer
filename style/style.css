@@ -11,6 +11,10 @@ html, body {
 	opacity: 1!important;
 }
 
+#info{
+	text-align: center;
+}
+
 #visualizer_wrapper{
 	text-align: center;
 }
